@@ -1,16 +1,18 @@
 package model;
 
+import com.google.gson.Gson;
+
 public class HistoryRecord {
 	private String userId="";
 	private String totalTime;
 	private String totalDistance;
-	private String last_location;
+	private String lastLocation;
 	
 	public String getLast_location() {
-		return last_location;
+		return lastLocation;
 	}
 	public void setLast_location(String last_location) {
-		this.last_location = last_location;
+		this.lastLocation = last_location;
 	}
 	public String getUserId() {
 		return userId;
@@ -29,6 +31,10 @@ public class HistoryRecord {
 	}
 	public void setTotalDistance(String totalDistance) {
 		this.totalDistance = totalDistance;
+	}
+	@Override
+	public String toString() {
+		return new Gson().toJson(this);
 	}
 	
 }

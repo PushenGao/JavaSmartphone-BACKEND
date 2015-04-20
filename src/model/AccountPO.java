@@ -1,40 +1,49 @@
 package model;
 
+import java.util.List;
+
+import com.google.gson.Gson;
+
 public class AccountPO {
-	private String id;
-	private String name;
-	private String age;
-	private String gender;
-	private HistoryRecord record = new HistoryRecord();
-	
-	public HistoryRecord getRecord() {
-		return record;
+	private String password;
+	private Account account = new Account();
+	private List<Account> pendingFriends;
+	private List<Account> activeFriends;
+
+	public Account getAccount() {
+		return account;
 	}
-	public void setRecord(HistoryRecord record) {
-		this.record = record;
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-	public String getId() {
-		return id;
+
+List<Account> getPendingFriends() {
+		return pendingFriends;
 	}
-	public void setId(String id) {
-		this.id = id;
+
+	public void setPendingFriends(List<Account> pendingFriends) {
+		this.pendingFriends = pendingFriends;
 	}
-	public String getName() {
-		return name;
+
+	public List<Account> getActiveFriends() {
+		return activeFriends;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setActiveFriends(List<Account> activeFriends) {
+		this.activeFriends = activeFriends;
 	}
-	public String getAge() {
-		return age;
+
+	@Override
+	public String toString() {
+		return new Gson().toJson(this);
 	}
-	public void setAge(String age) {
-		this.age = age;
+
+	public String getPassword() {
+		return password;
 	}
-	public String getGender() {
-		return gender;
-	}
-	public void setGender(String gender) {
-		this.gender = gender;
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

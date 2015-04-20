@@ -1,14 +1,14 @@
 package test;
 
-import model.AccountDAO;
+import model.AccountPO;
 import dbutil.DaoImpl;
 
 public class TestGetBaseInfo {
 	public static void main(String args[]){
 		DaoImpl daoImpl = new DaoImpl();
-		AccountDAO account = new AccountDAO();
+		AccountPO account = new AccountPO();
 		
 		account = daoImpl.getUserInfo("pusheng","12345");
-		System.out.print("");
+		System.out.print(account);
 	}
 }

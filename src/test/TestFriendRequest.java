@@ -1,6 +1,6 @@
 package test;
 
-import model.AccountDAO;
+import model.AccountPO;
 import model.FriendRequest;
 import dbutil.DaoImpl;
 
@@ -10,7 +10,7 @@ public class TestFriendRequest {
 		FriendRequest friend = new FriendRequest();
 		friend.setAction("request");
 		friend.setSenderId("pusheng");
-		friend.setReceiverId("zhengl");		
+		friend.setReceiverId("haoyuc");		
 		daoImpl.savefriendFequests(friend);
 		
 		friend.setAction("add");

@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.AccountDAO;
 import model.AccountPO;
+import model.Account;
 import model.FriendRequest;
 import model.HistoryRecord;
 import sql.SQL;
@@ -38,8 +38,8 @@ public class DaoImpl implements DaoInterface{
 
 	//return a user accountdao to the front end
 	@Override
-	public AccountDAO getUserInfo(String userid, String password) {
-		AccountDAO userAccount = new AccountDAO();
+	public AccountPO getUserInfo(String userid, String password) {
+		AccountPO userAccount = new AccountPO();
 		try {
 			PreparedStatement stmt = con.prepareStatement(SQL.GET_USER_INFO);
 			stmt.setString(1, userid);
@@ -47,14 +47,14 @@ public class DaoImpl implements DaoInterface{
 			while(rs.next()){
 				if(!rs.getString(3).equals(password))
 					return userAccount;
-				userAccount.setId(rs.getString(1));
-				userAccount.setName(rs.getString(2));
+				userAccount.getAccount().setId(rs.getString(1));
+				userAccount.getAccount().setName(rs.getString(2));
 				userAccount.setPassword(rs.getString(3));
-				userAccount.setAge(rs.getString(4));
-				userAccount.setGender(rs.getString(5));
-				userAccount.getHistory().setLast_location(rs.getString(6));
-				userAccount.getHistory().setTotalDistance(rs.getString(7));
-				userAccount.getHistory().setTotalTime(rs.getString(8));
+				userAccount.getAccount().setAge(rs.getString(4));
+				userAccount.getAccount().setGender(rs.getString(5));
+				userAccount.getAccount().getHistory().setLast_location(rs.getString(6));
+				userAccount.getAccount().getHistory().setTotalDistance(rs.getString(7));
+				userAccount.getAccount().getHistory().setTotalTime(rs.getString(8));
 			}
 			rs.close();
 			userAccount.setActiveFriends(this.getContacts(userid, "active"));
@@ -70,10 +70,10 @@ public class DaoImpl implements DaoInterface{
 	
 	//algorithm to compute difference of distance then return recommend
 	@Override
-	public List<AccountPO> getRecommendFriend(String userid) {
+	public List<String> getRecommendFriend(String userid) {
 		String selfLocation = "";
 		String otherLocation = "";
-		List<AccountPO> apos = new ArrayList<AccountPO>();
+		List<String> apos = new ArrayList<String>();
 		try{
 			PreparedStatement stmt = con.prepareStatement(SQL.GET_USER_INFO);
 			stmt.setString(1, userid);
@@ -87,9 +87,9 @@ public class DaoImpl implements DaoInterface{
 			while(rs1.next()){
 				if(!rs1.getString(1).equals(userid)){
 					otherLocation = rs1.getString(6);
-					AccountPO apo = this.checkDistance(selfLocation, otherLocation,rs1.getString(1));
+					Account apo = this.checkDistance(selfLocation, otherLocation,rs1.getString(1));
 					if(apo.getId() != null)
-						apos.add(apo);						
+						apos.add(apo.toString());						
 				}
 			}
 		}catch(SQLException e ){
@@ -118,14 +118,14 @@ public class DaoImpl implements DaoInterface{
 
 	//save the registered user info into db
 	@Override
-	public void saveUserInfo(AccountDAO account) {
+	public void saveUserInfo(AccountPO account) {
 		try (
 			PreparedStatement stmt = con.prepareStatement(SQL.INSERT_BASE)) {
-			stmt.setString(1, account.getId());
-			stmt.setString(2, account.getName());
+			stmt.setString(1, account.getAccount().getId());
+			stmt.setString(2, account.getAccount().getName());
 			stmt.setString(3, account.getPassword());
-			stmt.setString(4, account.getAge());
-			stmt.setString(5, account.getGender());
+			stmt.setString(4, account.getAccount().getAge());
+			stmt.setString(5, account.getAccount().getGender());
 			stmt.setString(6, "");
 			stmt.setString(7, "");
 			stmt.setString(8, "");
@@ -216,26 +216,26 @@ public class DaoImpl implements DaoInterface{
 	
 	//get account info the user has searched
 	@Override
-	public AccountPO getSearchUser(String userid) {
-		AccountPO apo = new AccountPO();
+	public Account getSearchUser(String userid) {
+		Account a = new Account();
 		try {
 			PreparedStatement stmt = con.prepareStatement(SQL.GET_USER_INFO);
 			stmt.setString(1, userid);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()){
-				apo.setAge(rs.getString(4));
-				apo.setGender(rs.getString(5));
-				apo.setId(rs.getString(1));
-				apo.setName(rs.getString(2));
-				apo.getRecord().setLast_location(rs.getString(6));
-				apo.getRecord().setTotalDistance(rs.getString(7));
-				apo.getRecord().setTotalTime(rs.getString(8));
+				a.setAge(rs.getString(4));
+				a.setGender(rs.getString(5));
+				a.setId(rs.getString(1));
+				a.setName(rs.getString(2));
+				a.getHistory().setLast_location(rs.getString(6));
+				a.getHistory().setTotalDistance(rs.getString(7));
+				a.getHistory().setTotalTime(rs.getString(8));
 			}
 			rs.close();
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
-		return apo;
+		return a;
 	}
 	
 	//check if the friend already exists in the db
@@ -264,8 +264,8 @@ public class DaoImpl implements DaoInterface{
 		return ifExists;
 	}
 	
-	private AccountPO checkDistance(String location1, String location2, String userId){
-		AccountPO apo = new AccountPO();
+	private Account checkDistance(String location1, String location2, String userId){
+		Account a = new Account();
 		double distance = DistanceUtil.getDistance(location1, location2);
 		if(distance < 3000){
 			try{
@@ -273,25 +273,25 @@ public class DaoImpl implements DaoInterface{
 				stmt.setString(1, userId);
 				ResultSet rs = stmt.executeQuery();
 				while(rs.next()){
-					apo.setAge(rs.getString(4));
-					apo.setGender(rs.getString(5));
-					apo.setId(rs.getString(1));
-					apo.setName(rs.getString(2));
-					apo.getRecord().setLast_location(rs.getString(6));
-					apo.getRecord().setTotalDistance(rs.getString(7));
-					apo.getRecord().setTotalTime(rs.getString(8));
+					a.setAge(rs.getString(4));
+					a.setGender(rs.getString(5));
+					a.setId(rs.getString(1));
+					a.setName(rs.getString(2));
+					a.getHistory().setLast_location(rs.getString(6));
+					a.getHistory().setTotalDistance(rs.getString(7));
+					a.getHistory().setTotalTime(rs.getString(8));
 				}
 			}catch(SQLException e){
 				e.printStackTrace();
 			}
 		}
 		
-		return apo;
+		return a;
 	}
 	
 	//get the information of user contacts, divided by status 
-	private List<AccountPO> getContacts(String userId, String status){
-		List<AccountPO> pos = new ArrayList<AccountPO>();
+	private List<Account> getContacts(String userId, String status){
+		List<Account> accounts = new ArrayList<Account>();
 		List<String> names = new ArrayList<String>();
 		try{
 			PreparedStatement stmt = con.prepareStatement(SQL.GET_CONTACT_INFO);
@@ -309,21 +309,21 @@ public class DaoImpl implements DaoInterface{
 				stmt1.setString(1, names.get(i));
 				ResultSet rs1 = stmt1.executeQuery();
 				while(rs1.next()){
-					AccountPO apo = new AccountPO();
-					apo.setAge(rs1.getString(4));
-					apo.setGender(rs1.getString(5));
-					apo.setId(rs1.getString(1));
-					apo.setName(rs1.getString(2));
-					apo.getRecord().setLast_location(rs1.getString(6));
-					apo.getRecord().setTotalDistance(rs1.getString(7));
-					apo.getRecord().setTotalTime(rs1.getString(8));
-					pos.add(apo);
+					Account a = new Account();
+					a.setAge(rs1.getString(4));
+					a.setGender(rs1.getString(5));
+					a.setId(rs1.getString(1));
+					a.setName(rs1.getString(2));
+					a.getHistory().setLast_location(rs1.getString(6));
+					a.getHistory().setTotalDistance(rs1.getString(7));
+					a.getHistory().setTotalTime(rs1.getString(8));
+					accounts.add(a);
 				}
 			}
 		}catch(SQLException e ){
 			e.printStackTrace();
 		}
-		return pos;
+		return accounts;
 	}
 
 
