@@ -8,9 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class TestRestFulAPI {
-	 private static final String targetURL = "http://localhost:8080/Jersey/rest/werun//login/pusheng/12345";
+	 private static final String targetURL = "http://localhost:8080/Jersey/rest/werun/login/pusheng/12345";
 
-     public static void main(String[] args) {
+	 public static void main(String args[]){
 
               try {
 
