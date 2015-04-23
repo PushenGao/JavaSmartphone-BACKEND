@@ -10,6 +10,7 @@ import java.util.List;
 
 import model.AccountPO;
 import model.Account;
+import model.ChatRecord;
 import model.FriendRequest;
 import model.HistoryRecord;
 import sql.SQL;
@@ -28,8 +29,10 @@ public class DaoImpl implements DaoInterface{
 			Statement stmt = con.createStatement();
 			String createTB1 = SQL.CREATE_BASE_INFO;
 			String createTB2 = SQL.CREATE_CONTACT_INFO;
+			String createTB3 = SQL.CREATE_CHAT_INFO;
 			stmt.executeUpdate(createTB1);
 			stmt.executeUpdate(createTB2);
+			stmt.executeUpdate(createTB3);
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -65,7 +68,35 @@ public class DaoImpl implements DaoInterface{
 		}
 		return userAccount;
 	}
-		    
+	
+	//get all chat record of this user 
+	@Override
+	public List<ChatRecord> getAndDeleteChatRecord(String userid) {
+		List<ChatRecord> chatRecords = new ArrayList<ChatRecord>();
+		try{
+			PreparedStatement stmt = con.prepareStatement(SQL.GET_CHAT_INFO);
+			stmt.setString(1, userid);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()){
+				ChatRecord chatRec = new ChatRecord();
+				chatRec.setMyName(rs.getString(2));
+				chatRec.setFriendName(rs.getString(3));
+				chatRec.setTimeStamp(rs.getString(4));
+				chatRec.setChatContent(rs.getString(5));
+				chatRecords.add(chatRec);
+			}
+			rs.close();
+			
+			stmt = con.prepareStatement(SQL.DELETE_CHAT);
+			stmt.setString(1, userid);
+			stmt.executeUpdate();
+			stmt.close();
+			
+		}catch(SQLException e ){
+			e.printStackTrace();
+		}
+		return chatRecords;
+	}
 	
 	
 	//algorithm to compute difference of distance then return recommend
@@ -214,6 +245,21 @@ public class DaoImpl implements DaoInterface{
 		
 	}
 	
+	@Override
+	public void saveChatInfo(ChatRecord chatRec) {
+		try (PreparedStatement stmt = con.prepareStatement(SQL.INSERT_CHAT)) {
+			stmt.setString(1, chatRec.getMyName());
+			stmt.setString(2, chatRec.getFriendName());
+			stmt.setString(3, chatRec.getTimeStamp());
+			stmt.setString(4, chatRec.getChatContent());
+			stmt.executeUpdate();
+			stmt.close();			
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+		
+	}
+	
 	//get account info the user has searched
 	@Override
 	public Account getSearchUser(String userid) {
@@ -325,8 +371,5 @@ public class DaoImpl implements DaoInterface{
 		}
 		return accounts;
 	}
-
-
-	
 
 }

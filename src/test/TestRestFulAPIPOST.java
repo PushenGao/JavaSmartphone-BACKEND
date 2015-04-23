@@ -8,8 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import model.AccountPO;
+
 public class TestRestFulAPIPOST {
-	  private static final String targetURL = "http://localhost:8080/Jersey/rest/werun/register";
+	  private static final String targetURL = "http://localhost:8080/Jersey/rest/werun/register1";
 
       public static void main(String[] args) {
 
@@ -22,10 +24,12 @@ public class TestRestFulAPIPOST {
                     httpConnection.setRequestMethod("POST");
                     httpConnection.setRequestProperty("Content-Type", "application/json");
 
-                    String input = "{\"password\":\"9999\",\"account\":{\"id\":\"pushengao\",\"name\":\"\",\"age\":\"22\",\"gender\":\"male\",\"historyRecord\":{\"userId\":\"\",\"totalTime\":\"\",\"totalDistance\":\"\",\"lastLocation\":\"\"}},\"pendingFriends\":[],\"activeFriends\":[]}";
+                    AccountPO apo = new AccountPO();
+                    apo.setPassword("123");
+                    //String input = "{\"password\":\"9999\",\"account\":{\"id\":\"pushengao\",\"name\":\"\",\"age\":\"22\",\"gender\":\"male\",\"historyRecord\":{\"userId\":\"\",\"totalTime\":\"\",\"totalDistance\":\"\",\"lastLocation\":\"\"}},\"pendingFriends\":[],\"activeFriends\":[]}";
 
                     OutputStream outputStream = httpConnection.getOutputStream();
-                    outputStream.write(input.getBytes());
+                    outputStream.write(apo.toString().getBytes());
                     outputStream.flush();
 
                     if (httpConnection.getResponseCode() != 200) {
