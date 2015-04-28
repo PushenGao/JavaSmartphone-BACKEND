@@ -122,11 +122,15 @@ public class DaoImpl implements DaoInterface{
 				selfLocation = rs.getString(6);
 			}
 			rs.close();
+			if(selfLocation.trim().equals(""))
+				return apos;
 			stmt = con.prepareStatement(SQL.GET_USERS);
 			ResultSet rs1 = stmt.executeQuery();
 			while(rs1.next()){
 				if(!rs1.getString(1).equals(userid)){
 					otherLocation = rs1.getString(6);
+					if(otherLocation.trim().equals(""))
+						continue;
 					Account apo = this.checkDistance(selfLocation, otherLocation,rs1.getString(1));
 					if(apo.getId() != null)
 						apos.add(apo.toString());						
@@ -199,12 +203,14 @@ public class DaoImpl implements DaoInterface{
 			
 			if(friend.getAction().equals("add")){
 				PreparedStatement stmt = con.prepareStatement(SQL.UPDATE_CONTACT);
-				stmt.setString(1, friend.getSenderId());
-				stmt.setString(2, friend.getReceiverId());
-				stmt.executeUpdate();
-				
 				stmt.setString(1, friend.getReceiverId());
 				stmt.setString(2, friend.getSenderId());
+				stmt.executeUpdate();
+				
+				stmt = con.prepareStatement(SQL.INSERT_CONTACT);
+				stmt.setString(1, friend.getSenderId());
+				stmt.setString(2, friend.getReceiverId());
+				stmt.setString(3, "active");
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -227,14 +233,7 @@ public class DaoImpl implements DaoInterface{
 					stmt.executeUpdate();
 					stmt.close();
 				}
-				if(ifExists[1] == 0){
-					PreparedStatement stmt = con.prepareStatement(SQL.INSERT_CONTACT);
-					stmt.setString(1, friend.getReceiverId());
-					stmt.setString(2, friend.getSenderId());
-					stmt.setString(3, "pending");
-					stmt.executeUpdate();
-					stmt.close();
-				}
+				
 			}else if(friend.getAction().equals("reject")){
 				PreparedStatement stmt = con.prepareStatement(SQL.REJECT_CONTACT);
 				stmt.setString(1, friend.getSenderId());

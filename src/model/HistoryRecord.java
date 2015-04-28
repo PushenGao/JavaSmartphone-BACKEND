@@ -3,7 +3,7 @@ package model;
 import com.google.gson.Gson;
 
 public class HistoryRecord {
-	private String userId="";
+	private String userId;
 	private String totalTime;
 	private String totalDistance;
 	private String lastLocation;
