@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import model.AccountPO;
 import model.Account;
@@ -124,10 +125,14 @@ public class DaoImpl implements DaoInterface{
 			rs.close();
 			if(selfLocation.trim().equals(""))
 				return apos;
+			
+			List<String> existingFriends = this.getExistingFriend(userid);
 			stmt = con.prepareStatement(SQL.GET_USERS);
 			ResultSet rs1 = stmt.executeQuery();
 			while(rs1.next()){
 				if(!rs1.getString(1).equals(userid)){
+					if(existingFriends.contains(rs1.getString(1)))
+						continue;
 					otherLocation = rs1.getString(6);
 					if(otherLocation.trim().equals(""))
 						continue;
@@ -135,6 +140,26 @@ public class DaoImpl implements DaoInterface{
 					if(apo.getId() != null)
 						apos.add(apo.toString());						
 				}
+			}
+			
+			if(apos.size() > 2){
+				Long seed = System.currentTimeMillis();
+				Random rand = new Random(seed);
+				List<String> aposReduce = new ArrayList<String>();
+				int recSize = 2;
+				List<Integer> recRandomList = new ArrayList<Integer>();
+				for(int i = 0 ; i < recSize; i++){
+					int num;
+					do{
+						num = rand.nextInt(apos.size());
+					}while(recRandomList.contains(num));
+					recRandomList.add(num);
+				}
+				
+				for(int i = 0 ; i <recRandomList.size(); i++){					
+					aposReduce.add(apos.get(recRandomList.get(i)));
+				}
+				return aposReduce;
 			}
 		}catch(SQLException e ){
 			e.printStackTrace();
@@ -378,6 +403,23 @@ public class DaoImpl implements DaoInterface{
 			e.printStackTrace();
 		}
 		return accounts;
+	}
+	
+	private List<String> getExistingFriend(String userid) {
+		List<String> friendids = new ArrayList<String>();
+		try
+		{
+			PreparedStatement stmt = con.prepareStatement(SQL.GET_FRIENDS);
+			stmt.setString(1, userid);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()){
+				String accountid = rs.getString(3);
+				friendids.add(accountid);
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return friendids;
 	}
 
 }

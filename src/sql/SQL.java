@@ -124,6 +124,13 @@ public class SQL {
 	/**
 	 * Query to check if the contact exists
 	 */
+	public static final String GET_FRIENDS = "select *"
+			+ " from " + CONTACT_INFO
+			+ " where user_id = ? ";
+	
+	/**
+	 * Query to check if the contact exists
+	 */
 	public static final String GET_USERS = "select *"
 			+ " from " + BASE_INFO;
 }
