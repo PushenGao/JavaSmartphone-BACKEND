@@ -45,8 +45,8 @@ public class ContactsService {
 		JSONParser parser=new JSONParser();
 		JSONObject objs =(JSONObject)parser.parse(accountPOJson);
 		AccountPO accountpo = new AccountPO();
-		JSONObject accountJson  = (JSONObject) objs.get("account");
-		accountpo.getAccount().setId((String) accountJson.get("id"));
+		JSONObject accountJson  = (JSONObject) objs.get("basicAccount");
+		accountpo.getAccount().setId((String) accountJson.get("name"));
 		accountpo.getAccount().setAge((String) accountJson.get("age"));
 		accountpo.getAccount().setGender((String) accountJson.get("gender"));
 		accountpo.setPassword((String) objs.get("password"));
@@ -56,10 +56,14 @@ public class ContactsService {
 		List<String> existings = daoimpl.getExistingUserid();
 		if(!accountpo.getAccount().getId().equals("") && !existings.contains(accountpo.getAccount().getId())){
 			daoimpl.saveUserInfo(accountpo);
+			daoimpl.closeConnection();
 			return "success";
 		}
-		else
+		else{
+			daoimpl.closeConnection();
 			return "failed";
+		}
+			
 	}
 	
 	//update the running record of users into database.
@@ -80,10 +84,14 @@ public class ContactsService {
 		DaoImpl daoimpl = new DaoImpl();
 		if(!history.getUserId().trim() .equals("")){
 			daoimpl.saveRunningRecord(history);
+			daoimpl.closeConnection();
 			return "success";
 		}
-		else
+		else{
+			daoimpl.closeConnection();
 			return "failed";
+		}
+			
 	}
 	
 	//manage the CONTACT_INFO table based on the action in the object FriendRequest
@@ -101,6 +109,7 @@ public class ContactsService {
 		
 		DaoImpl daoimpl = new DaoImpl();
 		daoimpl.savefriendFequests(friend);
+		daoimpl.closeConnection();
 		return "success";		
 	}
 	
@@ -119,6 +128,7 @@ public class ContactsService {
 				chatRec.setChatContent((String) objs.get("chatContent"));			
 				DaoImpl daoimpl = new DaoImpl();
 				daoimpl.saveChatInfo(chatRec);
+				daoimpl.closeConnection();
 				return "success";		
 		}
 	
@@ -136,12 +146,12 @@ public class ContactsService {
         OutputStream os = null;
         
         try {
-        	File file =new File("/home/pushen/"+directory);  
+        	File file =new File("/Users/JiateLi/Desktop/"+directory);  
             //if there is no such directory, create the directory
             if  (!file .exists()  && !file .isDirectory())    
             	file .mkdir(); 
            
-        	String path = "/home/pushen/" + directory + "/" + imgName +".png";
+        	String path = "/Users/JiateLi/Desktop/" + directory + "/" + imgName +".png";
             File fileUploaded = new File(path);
             if(action.equals("delete")){
             	fileUploaded.delete();
@@ -175,6 +185,7 @@ public class ContactsService {
 		DaoImpl daoimpl = new DaoImpl();
 		AccountPO user = new AccountPO();
 		user = daoimpl.getUserInfo(userId, password);
+		daoimpl.closeConnection();
 		return user.toString();
 	}
 	
@@ -185,7 +196,9 @@ public class ContactsService {
 	public String getRecommend(@PathParam("userId") String userid) {
 		List<String> recommends = new ArrayList<String>();
 		DaoImpl daoimpl = new DaoImpl();
+		
 		recommends = daoimpl.getRecommendFriend(userid);
+		daoimpl.closeConnection();
 		return recommends.toString();
 	}
 	
@@ -197,6 +210,7 @@ public class ContactsService {
 		Account searched = new Account();
 		DaoImpl daoimpl = new DaoImpl();
 		searched = daoimpl.getSearchUser(userid);
+		daoimpl.closeConnection();
 		return searched.toString();
 	}
 	
@@ -212,6 +226,7 @@ public class ContactsService {
 			for(int i= 0 ; i < chatRecords.size(); i++){
 				chatRecordsString.add(chatRecords.get(i).toString());
 			}
+			daoimpl.closeConnection();
 			return chatRecordsString.toString();
 		}
 	
@@ -222,11 +237,11 @@ public class ContactsService {
 	@Produces("image/png")
 	public Response getFile(@PathParam("receiverId") String directory) throws IOException {
 		File fileToDownload = null;
-		File file=new File("/home/pushen/"+directory);
+		File file=new File("/Users/JiateLi/Desktop/"+directory);
 		String test[];
 		test=file.list();
 		if(test!=null && test.length != 0){
-			fileToDownload = new File("/home/pushen/" +directory+"/"+ test[0]);
+			fileToDownload = new File("/Users/JiateLi/Desktop/" +directory+"/"+ test[0]);
 			ResponseBuilder response = Response.ok((Object) fileToDownload);
 			response.header("imgFrom",
 					test[0]);

@@ -23,6 +23,15 @@ public class DaoImpl implements DaoInterface{
 		this.checkTable();
 	}
 	
+	public void closeConnection(){
+		try {
+			this.con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	//create two tables in the database
 	public void checkTable() {
 		try {

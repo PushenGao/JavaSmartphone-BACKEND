@@ -11,7 +11,7 @@ import java.net.URL;
 import model.AccountPO;
 
 public class TestRestFulAPIPOST {
-	  private static final String targetURL = "http://localhost:8080/Jersey/rest/werun/register1";
+	  private static final String targetURL = "http://localhost:8080/Jersey/rest/werun/register";
 
       public static void main(String[] args) {
 
