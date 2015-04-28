@@ -141,12 +141,12 @@ public class DaoImpl implements DaoInterface{
 						apos.add(apo.toString());						
 				}
 			}
-			
-			if(apos.size() > 2){
+			int recSize = 2;
+			if(apos.size() > recSize){
 				Long seed = System.currentTimeMillis();
 				Random rand = new Random(seed);
 				List<String> aposReduce = new ArrayList<String>();
-				int recSize = 2;
+				
 				List<Integer> recRandomList = new ArrayList<Integer>();
 				for(int i = 0 ; i < recSize; i++){
 					int num;
