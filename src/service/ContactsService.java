@@ -108,9 +108,16 @@ public class ContactsService {
 		friend.setReceiverId((String) objs.get("receiverId"));
 		
 		DaoImpl daoimpl = new DaoImpl();
-		daoimpl.savefriendFequests(friend);
-		daoimpl.closeConnection();
-		return "success";		
+		List<String> existings = daoimpl.getExistingUserid();
+		if(existings.contains(friend.getReceiverId()) && existings.contains(friend.getSenderId())){
+			daoimpl.savefriendFequests(friend);
+			daoimpl.closeConnection();
+			return "success";	
+		}
+		else{
+			daoimpl.closeConnection();
+			return "fail";
+		}
 	}
 	
 	//manage the CHAT_INFO table, act like a buffer table.
