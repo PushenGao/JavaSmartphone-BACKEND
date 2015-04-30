@@ -28,8 +28,8 @@ public class BInaryUpload {
 		ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
 
-        WebResource resource = client.resource(getBaseURI()).path("uploadStream/fucker/lover/add");
-        InputStream fileInStream = new FileInputStream("/home/pushen/imageToUpload.png");
+        WebResource resource = client.resource(getBaseURI()).path("uploadStream/fucke/lover/delete");
+        InputStream fileInStream = new FileInputStream("abc");
 
 		  
 		ClientResponse response = resource.type(MediaType.APPLICATION_OCTET_STREAM)

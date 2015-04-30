@@ -20,4 +20,16 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>userRequire</servlet-name>
+    <servlet-class>
+		presentation.PresentationServlet
+	</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>userRequire</servlet-name>
+    <url-pattern>/presentation</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
