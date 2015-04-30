@@ -183,6 +183,48 @@ public class ContactsService {
 	}
 	
 	
+	@POST
+    @Path("uploadStream/{senderId}/{receiverId}/{action}")
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    public void uploadFileTest(
+    		@PathParam("receiverId") String directory,
+    		@PathParam("action") String action,
+    		 @PathParam("senderId") String imgName,
+    		InputStream attachmentInputStream)  {
+		  OutputStream os = null;
+	        
+	        try {
+	        	File file =new File("/home/pushen/"+directory);  
+	            //if there is no such directory, create the directory
+	            if  (!file .exists()  && !file .isDirectory())    
+	            	file .mkdir(); 
+	           
+	        	String path = "/home/pushen/" + directory + "/" + imgName +".png";
+	            File fileUploaded = new File(path);
+	            if(action.equals("delete")){
+	            	fileUploaded.delete();
+	            	return;
+	            }
+	            os = new FileOutputStream(fileUploaded);
+	            byte[] b = new byte[2048];
+	            int length;
+	            while ((length = attachmentInputStream.read(b)) != -1) {
+	                os.write(b, 0, length);
+	            }
+	        } catch (IOException ex) {
+	            
+	        } finally {
+	            try {
+	            	if(!action.equals("delete"))
+	            		os.close();
+	            } catch (IOException ex) {
+	                
+	            }
+	        }
+        
+	}
+	
+	
 	//when the user login, return an AccountPO to the client including all the information
 	@GET
 	@Path("/login/{userId}/{passWord}")
