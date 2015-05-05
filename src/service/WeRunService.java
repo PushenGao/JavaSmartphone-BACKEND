@@ -34,7 +34,7 @@ import model.HistoryRecord;
 
 
 @Path("/werun")
-public class ContactsService {
+public class WeRunService implements WeRunInterface {
 
 	//save the user base information into database when register.
 	@POST
